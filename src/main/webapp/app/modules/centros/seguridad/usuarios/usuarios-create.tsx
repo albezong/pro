@@ -141,7 +141,7 @@ export const UsuariosCreateCarousel = () => {
             imageUrl: createdUser.imageUrl,
             activated: false,
             langKey: 'es',
-            authorities: ['ROLE_USER', 'ROLE_ADMIN'], // <-- agrega ROLE_ADMIN
+            authorities: ['ROLE_USER'],
           });
         }
 
