@@ -58,10 +58,8 @@ const SeguridadIndex = () => {
     );
   }
 
-  // SuperAdmin de BD → acceso total, va a usuarios
+  // SuperAdmin de BD → acceso total
   if (isSuperAdmin) return <Navigate to="usuarios-center" replace />;
-
-  // Redirigir al primer sub-módulo accesible
   if (usuarios.canView) return <Navigate to="usuarios-center" replace />;
   if (perfil.canView) return <Navigate to="profiles-center" replace />;
   if (modulos.canView) return <Navigate to="modules-center" replace />;

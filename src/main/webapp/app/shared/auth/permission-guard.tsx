@@ -21,16 +21,11 @@ const Spinner = ({ label }: { label: string }) => (
 /**
  * Guard de permisos de módulo.
  *
- * IMPORTANTE: ROLE_ADMIN de JHipster NO bypass este guard.
- * El acceso se determina SIEMPRE por la tabla module_permission en BD.
- * Solo isSuperAdmin=true en el perfil asignado da acceso total.
+ * ROLE_ADMIN de JHipster NO bypasea este guard.
+ * El acceso lo determina SIEMPRE el perfil en BD (module_permission).
+ * Solo isSuperAdmin=true (flag en perfil) da acceso total.
  *
- * Flujo:
- * 1. Espera sesión (sessionHasBeenFetched)
- * 2. Espera permisos (loaded=true) — nunca redirige antes
- * 3. Si el perfil es isSuperAdmin o isAdmin (flag de BD) → pasa
- * 4. Si tiene el permiso requerido en el módulo → pasa
- * 5. Si no → redirect a /404 o mensaje inline
+ * Nunca hace Navigate mientras loaded=false — muestra spinner.
  */
 const PermissionGuard = ({ moduleName, requiredAction, children, redirect = false }: PermissionGuardProps) => {
   const sessionFetched = useAppSelector(s => s.authentication.sessionHasBeenFetched);
@@ -42,7 +37,7 @@ const PermissionGuard = ({ moduleName, requiredAction, children, redirect = fals
   if (!isAuthenticated) return null;
   if (!loaded) return <Spinner label="Cargando permisos..." />;
 
-  // SuperAdmin de BD (perfil marcado como isSuperAdmin) → acceso total
+  // isSuperAdmin del perfil en BD → acceso total
   if (perms?.isAdmin || perms?.isSuperAdmin) return <>{children}</>;
 
   const names = Array.isArray(moduleName) ? moduleName : [moduleName];
@@ -55,7 +50,6 @@ const PermissionGuard = ({ moduleName, requiredAction, children, redirect = fals
       return !!m[requiredAction];
     }
 
-    // Sin requiredAction o canView → acceso si tiene cualquier permiso activo
     return !!(m.canView || m.canCreate || m.canEdit || m.canDelete || m.canHistory);
   });
 

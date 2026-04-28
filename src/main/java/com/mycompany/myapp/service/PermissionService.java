@@ -4,7 +4,6 @@ import com.mycompany.myapp.domain.ModulePermission;
 import com.mycompany.myapp.domain.Profile;
 import com.mycompany.myapp.repository.ModulePermissionRepository;
 import com.mycompany.myapp.repository.ProfileRepository;
-import com.mycompany.myapp.security.AuthoritiesConstants;
 import com.mycompany.myapp.security.SecurityUtils;
 import com.mycompany.myapp.service.dto.UserPermissionsDTO;
 import java.util.*;
@@ -16,7 +15,15 @@ import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Central service for evaluating dynamic permissions per user/module/action.
- * ADMINs always have full access. Non-admins are evaluated against the DB.
+ *
+ * IMPORTANTE: ROLE_ADMIN de JHipster NO da acceso automático a todo.
+ * El acceso se determina SIEMPRE por la tabla module_permission del perfil
+ * asignado.
+ * Solo isSuperAdmin=true en el perfil asignado da acceso total.
+ *
+ * ROLE_ADMIN sigue siendo necesario para /api/admin/** (gestión de usuarios
+ * JHipster),
+ * pero NO influye en la lógica de permisos de módulos.
  */
 @Service
 @Transactional(readOnly = true)
@@ -33,12 +40,11 @@ public class PermissionService {
     }
 
     /**
-     * Checks if the currently authenticated user has the given action on the given module.
+     * Checks if the currently authenticated user has the given action on the given
+     * module.
+     * Evaluated purely from DB — ROLE_ADMIN is NOT a bypass.
      */
     public boolean hasPermission(String moduleName, String action) {
-        if (SecurityUtils.hasCurrentUserThisAuthority(AuthoritiesConstants.ADMIN)) {
-            return true;
-        }
         Optional<String> login = SecurityUtils.getCurrentUserLogin();
         if (login.isEmpty()) return false;
         return hasPermissionForUser(login.orElseThrow(), moduleName, action);
@@ -46,13 +52,12 @@ public class PermissionService {
 
     /**
      * Checks if a specific user has the given action on the given module.
+     * Evaluated purely from DB — ROLE_ADMIN is NOT a bypass.
      */
     public boolean hasPermissionForUser(String login, String moduleName, String action) {
-        if (SecurityUtils.hasCurrentUserThisAuthority(AuthoritiesConstants.ADMIN)) {
-            return true;
-        }
         List<Profile> profiles = profileRepository.findActiveProfilesByUserLogin(login);
         for (Profile profile : profiles) {
+            // isSuperAdmin in the profile = full access to everything
             if (Boolean.TRUE.equals(profile.getIsSuperAdmin())) return true;
             Optional<ModulePermission> perm = modulePermissionRepository.findByProfileIdAndModuleName(profile.getId(), moduleName);
             if (perm.isPresent() && checkAction(perm.orElseThrow(), action)) {
@@ -63,24 +68,32 @@ public class PermissionService {
     }
 
     /**
-     * Returns a flat map of moduleName -> {canView, canCreate, canEdit, canDelete}
+     * Returns a flat map of moduleName -> {canView, canCreate, canEdit, canDelete,
+     * canHistory}
      * for the currently authenticated user.
+     *
+     * isAdmin reflects the JHipster ROLE_ADMIN (used only by the frontend to know
+     * whether /api/admin/** calls are allowed). It does NOT grant module access.
+     * isSuperAdmin reflects the profile flag in DB — this grants full module
+     * access.
      */
     public UserPermissionsDTO getCurrentUserPermissions() {
         Optional<String> login = SecurityUtils.getCurrentUserLogin();
-        boolean isAdmin = SecurityUtils.hasCurrentUserThisAuthority(AuthoritiesConstants.ADMIN);
 
         UserPermissionsDTO dto = new UserPermissionsDTO();
-        dto.setAdmin(isAdmin);
 
-        if (isAdmin || login.isEmpty()) {
-            return dto;
-        }
+        // Reflect ROLE_ADMIN purely for information — frontend uses it only for
+        // knowing if /api/admin/** is accessible, NOT for module-level authorization.
+        boolean isJhipsterAdmin = SecurityUtils.hasCurrentUserThisAuthority("ROLE_ADMIN");
+        dto.setAdmin(isJhipsterAdmin);
+
+        if (login.isEmpty()) return dto;
 
         List<Profile> profiles = profileRepository.findActiveProfilesByUserLogin(login.orElseThrow());
         boolean isSuperAdmin = profiles.stream().anyMatch(p -> Boolean.TRUE.equals(p.getIsSuperAdmin()));
         dto.setSuperAdmin(isSuperAdmin);
 
+        // Always load module permissions from DB regardless of ROLE_ADMIN
         if (!isSuperAdmin) {
             List<Long> profileIds = profiles.stream().map(Profile::getId).collect(Collectors.toList());
             List<ModulePermission> permissions = modulePermissionRepository.findByProfileIdIn(profileIds);

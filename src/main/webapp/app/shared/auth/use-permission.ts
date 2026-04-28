@@ -1,14 +1,6 @@
 import { useAppSelector } from 'app/config/store';
-import { hasAnyAuthority } from 'app/shared/auth/private-route';
-import { AUTHORITIES } from 'app/config/constants';
 import { ModuleAccess } from 'app/shared/reducers/permission';
 
-const FULL_ACCESS: ModuleAccess = {
-  canView: true,
-  canCreate: true,
-  canEdit: true,
-  canDelete: true,
-};
 const NO_ACCESS: ModuleAccess = {
   canView: false,
   canCreate: false,
@@ -16,23 +8,36 @@ const NO_ACCESS: ModuleAccess = {
   canDelete: false,
 };
 
+/**
+ * Hook que devuelve los permisos del módulo indicado para el usuario actual.
+ *
+ * IMPORTANTE: ROLE_ADMIN de JHipster NO da acceso automático.
+ * El acceso lo determina SIEMPRE el perfil en BD.
+ * Solo isSuperAdmin=true en el perfil devuelve acceso total a todos los módulos.
+ *
+ * Flujo:
+ * 1. Sin autenticación → NO_ACCESS
+ * 2. Permisos no cargados aún → NO_ACCESS (el guard mostrará spinner)
+ * 3. isSuperAdmin o isAdmin de BD → FULL_ACCESS
+ * 4. Evalúa módulo en el mapa de permisos
+ */
 export const usePermission = (moduleName: string): ModuleAccess => {
   const perms = useAppSelector(state => state.permission?.permissions);
   const isAuthenticated = useAppSelector(state => state.authentication.isAuthenticated);
-  const authorities = useAppSelector(state => state.authentication.account?.authorities ?? []);
-  const isAdmin = hasAnyAuthority(authorities, [AUTHORITIES.ADMIN]);
+  const loaded = useAppSelector(state => state.permission?.loaded);
 
   if (!isAuthenticated) return NO_ACCESS;
-  if (isAdmin) return FULL_ACCESS;
-  if (!perms) return NO_ACCESS;
-  if (perms.isAdmin || perms.isSuperAdmin) return FULL_ACCESS;
+  // Mientras no carguen los permisos de BD, devolver NO_ACCESS
+  // El PermissionGuard mostrará spinner hasta que loaded=true
+  if (!loaded || !perms) return NO_ACCESS;
+
+  // isSuperAdmin del perfil en BD → acceso total
+  if (perms.isSuperAdmin || perms.isAdmin) {
+    return { canView: true, canCreate: true, canEdit: true, canDelete: true };
+  }
 
   const m = perms.modules?.[moduleName];
   if (!m) return NO_ACCESS;
-
-  // Regla: si tiene canCreate, canEdit, canDelete o canHistory activo
-  // el módulo es visible automáticamente (canView implícito).
-  const hasAnyAction = m.canCreate || m.canEdit || m.canDelete || m.canView;
 
   return {
     canView: m.canView,

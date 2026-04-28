@@ -8,8 +8,8 @@ import { usePermission } from 'app/shared/auth/use-permission';
  * Menú de centros.
  *
  * Visibilidad controlada SOLO por permisos de BD (module_permission).
- * ROLE_ADMIN de JHipster no bypasea — lo que manda es isSuperAdmin del perfil.
- * El reducer de permisos ya detecta isSuperAdmin y devuelve canView=true en todo.
+ * ROLE_ADMIN de JHipster NO bypasea — lo que manda es isSuperAdmin del perfil.
+ * El hook usePermission ya detecta isSuperAdmin y devuelve canView=true en todo.
  */
 const CentrosMenu = () => {
   const isAuthenticated = useAppSelector(s => s.authentication.isAuthenticated);
@@ -28,7 +28,6 @@ const CentrosMenu = () => {
   const ventas = usePermission('Ventas');
 
   if (!isAuthenticated) return null;
-  // Esperar permisos antes de mostrar cualquier cosa
   if (!loaded) return null;
 
   const hasPerm = (p: ReturnType<typeof usePermission>) => p.canView || p.canCreate || p.canEdit || p.canDelete;
@@ -39,7 +38,6 @@ const CentrosMenu = () => {
 
   return (
     <>
-      {/* ── SEGURIDAD ─────────────────────────────────────────────────────── */}
       {verSeguridad && (
         <NavDropdown icon="shield-alt" name="Seguridad" id="seguridad-menu" data-cy="seguridadMenu">
           {(isSuperAdmin || hasPerm(usuarios)) && (
@@ -65,7 +63,6 @@ const CentrosMenu = () => {
         </NavDropdown>
       )}
 
-      {/* ── PRINCIPAL 1 ───────────────────────────────────────────────────── */}
       {verPrincipal1 && (
         <NavDropdown icon="star" name="Principal 1" id="principal1-menu" data-cy="principal1Menu">
           {(isSuperAdmin || hasPerm(p11)) && (
@@ -81,7 +78,6 @@ const CentrosMenu = () => {
         </NavDropdown>
       )}
 
-      {/* ── PRINCIPAL 2 ───────────────────────────────────────────────────── */}
       {verPrincipal2 && (
         <NavDropdown icon="building" name="Principal 2" id="principal2-menu" data-cy="principal2Menu">
           {(isSuperAdmin || hasPerm(p21)) && (
@@ -94,6 +90,34 @@ const CentrosMenu = () => {
               Planificación de Tareas
             </MenuItem>
           )}
+        </NavDropdown>
+      )}
+
+      {(isSuperAdmin || hasPerm(rh)) && (
+        <NavDropdown icon="users" name="Recursos Humanos" id="rh-menu" data-cy="rhMenu">
+          <MenuItem icon="list" to="/rh/rh1-1" data-cy="rh11">
+            RH 1.1
+          </MenuItem>
+          <MenuItem icon="list" to="/rh/rh1-2" data-cy="rh12">
+            RH 1.2
+          </MenuItem>
+          <MenuItem icon="list" to="/rh/rh1-3" data-cy="rh13">
+            RH 1.3
+          </MenuItem>
+        </NavDropdown>
+      )}
+
+      {(isSuperAdmin || hasPerm(ventas)) && (
+        <NavDropdown icon="chart-line" name="Ventas" id="ventas-menu" data-cy="ventasMenu">
+          <MenuItem icon="list" to="/ventas/ventas1-1" data-cy="ventas11">
+            Ventas 1.1
+          </MenuItem>
+          <MenuItem icon="list" to="/ventas/ventas1-2" data-cy="ventas12">
+            Ventas 1.2
+          </MenuItem>
+          <MenuItem icon="list" to="/ventas/ventas1-3" data-cy="ventas13">
+            Ventas 1.3
+          </MenuItem>
         </NavDropdown>
       )}
     </>
