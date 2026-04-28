@@ -7,7 +7,7 @@ import LoadingBar from 'react-redux-loading-bar';
 
 import { useAppDispatch } from 'app/config/store';
 import { setLocale } from 'app/shared/reducers/locale';
-import { AccountMenu, AdminMenu, LocaleMenu } from '../menus';
+import { AccountMenu, LocaleMenu } from '../menus';
 import { Brand, Home } from './header-components';
 import CentrosMenu from 'app/shared/layout/menus/centros-menu';
 
@@ -54,9 +54,6 @@ const Header = (props: IHeaderProps) => {
             {/* Dropdowns dinámicos por módulo — validados por permisos de BD */}
             {props.isAuthenticated && <CentrosMenu />}
             {/* Admin: menú técnico de JHipster (solo ROLE_ADMIN) */}
-            {props.isAuthenticated && props.isAdmin && (
-              <AdminMenu showOpenAPI={props.isOpenAPIEnabled} showDatabase={!props.isInProduction} />
-            )}
             <LocaleMenu currentLocale={props.currentLocale} onClick={handleLocaleChange} />
             <AccountMenu isAuthenticated={props.isAuthenticated} />
           </Nav>
