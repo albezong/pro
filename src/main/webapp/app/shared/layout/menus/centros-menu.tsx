@@ -2,20 +2,19 @@ import React from 'react';
 import { NavDropdown } from './menu-components';
 import MenuItem from './menu-item';
 import { useAppSelector } from 'app/config/store';
-import { hasAnyAuthority } from 'app/shared/auth/private-route';
-import { AUTHORITIES } from 'app/config/constants';
 import { usePermission } from 'app/shared/auth/use-permission';
 
 /**
- * hasAnyPerm: true si el usuario tiene al menos un permiso activo (sin canView).
+ * Menú de centros.
+ *
+ * Visibilidad controlada SOLO por permisos de BD (module_permission).
+ * ROLE_ADMIN de JHipster no bypasea — lo que manda es isSuperAdmin del perfil.
+ * El reducer de permisos ya detecta isSuperAdmin y devuelve canView=true en todo.
  */
-const hasAnyPerm = (p: ReturnType<typeof usePermission>) => p.canCreate || p.canEdit || p.canDelete || p.canView;
-
 const CentrosMenu = () => {
   const isAuthenticated = useAppSelector(s => s.authentication.isAuthenticated);
-  const authorities = useAppSelector(s => s.authentication.account?.authorities ?? []);
-  const isAdmin = hasAnyAuthority(authorities, [AUTHORITIES.ADMIN]);
   const loaded = useAppSelector(s => s.permission?.loaded);
+  const isSuperAdmin = useAppSelector(s => s.permission?.permissions?.isSuperAdmin || s.permission?.permissions?.isAdmin);
 
   const usuarios = usePermission('Usuarios');
   const perfil = usePermission('Perfil');
@@ -29,45 +28,52 @@ const CentrosMenu = () => {
   const ventas = usePermission('Ventas');
 
   if (!isAuthenticated) return null;
-  if (!isAdmin && !loaded) return null;
+  // Esperar permisos antes de mostrar cualquier cosa
+  if (!loaded) return null;
+
+  const hasPerm = (p: ReturnType<typeof usePermission>) => p.canView || p.canCreate || p.canEdit || p.canDelete;
+
+  const verSeguridad = isSuperAdmin || hasPerm(usuarios) || hasPerm(perfil) || hasPerm(modulos) || hasPerm(permisos);
+  const verPrincipal1 = isSuperAdmin || hasPerm(p11) || hasPerm(p12);
+  const verPrincipal2 = isSuperAdmin || hasPerm(p21) || hasPerm(p22);
 
   return (
     <>
       {/* ── SEGURIDAD ─────────────────────────────────────────────────────── */}
-      {(isAdmin || hasAnyPerm(usuarios) || hasAnyPerm(perfil) || hasAnyPerm(modulos) || hasAnyPerm(permisos)) && (
+      {verSeguridad && (
         <NavDropdown icon="shield-alt" name="Seguridad" id="seguridad-menu" data-cy="seguridadMenu">
-          {(isAdmin || hasAnyPerm(usuarios)) && (
+          {(isSuperAdmin || hasPerm(usuarios)) && (
             <MenuItem icon="user" to="/seguridad/usuarios-center" data-cy="usuarios">
               Usuarios
             </MenuItem>
           )}
-          {(isAdmin || hasAnyPerm(perfil)) && (
+          {(isSuperAdmin || hasPerm(perfil)) && (
             <MenuItem icon="lock" to="/seguridad/profiles-center" data-cy="perfil">
               Perfiles
             </MenuItem>
           )}
-          {(isAdmin || hasAnyPerm(modulos)) && (
+          {(isSuperAdmin || hasPerm(modulos)) && (
             <MenuItem icon="th-list" to="/seguridad/modules-center" data-cy="modulos">
               Módulos
             </MenuItem>
           )}
-          {(isAdmin || hasAnyPerm(permisos)) && (
-            <MenuItem icon="tasks" to="/seguridad/profile-permissions-center" data-cy="permisos">
-              Permisos
+          {(isSuperAdmin || hasPerm(permisos)) && (
+            <MenuItem icon="tasks" to="/seguridad/profile-permissions-matrix" data-cy="permisos">
+              Matriz de Permisos
             </MenuItem>
           )}
         </NavDropdown>
       )}
 
       {/* ── PRINCIPAL 1 ───────────────────────────────────────────────────── */}
-      {(isAdmin || hasAnyPerm(p11) || hasAnyPerm(p12)) && (
+      {verPrincipal1 && (
         <NavDropdown icon="star" name="Principal 1" id="principal1-menu" data-cy="principal1Menu">
-          {(isAdmin || hasAnyPerm(p11)) && (
+          {(isSuperAdmin || hasPerm(p11)) && (
             <MenuItem icon="list" to="/principal-1-routes/principal-1-1-center" data-cy="principal11">
               Principal 1.1
             </MenuItem>
           )}
-          {(isAdmin || hasAnyPerm(p12)) && (
+          {(isSuperAdmin || hasPerm(p12)) && (
             <MenuItem icon="list" to="/principal-1-routes/principal-1-2-center" data-cy="principal12">
               Principal 1.2
             </MenuItem>
@@ -76,14 +82,14 @@ const CentrosMenu = () => {
       )}
 
       {/* ── PRINCIPAL 2 ───────────────────────────────────────────────────── */}
-      {(isAdmin || hasAnyPerm(p21) || hasAnyPerm(p22)) && (
+      {verPrincipal2 && (
         <NavDropdown icon="building" name="Principal 2" id="principal2-menu" data-cy="principal2Menu">
-          {(isAdmin || hasAnyPerm(p21)) && (
+          {(isSuperAdmin || hasPerm(p21)) && (
             <MenuItem icon="list" to="/principal-2-routes/principal-2-1-center" data-cy="principal21">
               Principal 2.1
             </MenuItem>
           )}
-          {(isAdmin || hasAnyPerm(p22)) && (
+          {(isSuperAdmin || hasPerm(p22)) && (
             <MenuItem icon="list" to="/principal-2-routes/principal-2-2-center" data-cy="principal22">
               Planificación de Tareas
             </MenuItem>

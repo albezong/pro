@@ -34,15 +34,19 @@ import UsuariosDelete from './usuarios/usuarios-delete';
 import UsuariosDetail from './usuarios/usuarios-detail';
 import UsuariosUpdate from './usuarios/usuarios-update';
 
+/**
+ * Index inteligente para /seguridad.
+ *
+ * Ya NO usa ROLE_ADMIN de JHipster como bypass.
+ * Redirige según permisos de BD (isSuperAdmin o canView por módulo).
+ */
 const SeguridadIndex = () => {
-  const isAdmin = useAppSelector(s => (s.authentication.account?.authorities ?? []).includes('ROLE_ADMIN'));
   const loaded = useAppSelector(s => s.permission?.loaded);
+  const isSuperAdmin = useAppSelector(s => s.permission?.permissions?.isSuperAdmin || s.permission?.permissions?.isAdmin);
   const usuarios = usePermission('Usuarios');
   const perfil = usePermission('Perfil');
   const modulos = usePermission('Modulos');
   const permisos = usePermission('Permisos');
-
-  if (isAdmin) return <Navigate to="usuarios-center" replace />;
 
   if (!loaded) {
     return (
@@ -53,6 +57,15 @@ const SeguridadIndex = () => {
       </div>
     );
   }
+
+  // SuperAdmin de BD → acceso total, va a usuarios
+  if (isSuperAdmin) return <Navigate to="usuarios-center" replace />;
+
+  // Redirigir al primer sub-módulo accesible
+  if (usuarios.canView) return <Navigate to="usuarios-center" replace />;
+  if (perfil.canView) return <Navigate to="profiles-center" replace />;
+  if (modulos.canView) return <Navigate to="modules-center" replace />;
+  if (permisos.canView) return <Navigate to="profile-permissions-center" replace />;
 
   return <Navigate to="/404" replace />;
 };
@@ -96,7 +109,7 @@ export default () => (
     <Route
       path="modules-detail/:id"
       element={
-        <PermissionGuard moduleName="Modulos" requiredAction="canView" redirect>
+        <PermissionGuard moduleName="Modulos" redirect>
           <ModulesDetail />
         </PermissionGuard>
       }
@@ -145,7 +158,7 @@ export default () => (
     <Route
       path="profiles-detail/:id"
       element={
-        <PermissionGuard moduleName="Perfil" requiredAction="canView" redirect>
+        <PermissionGuard moduleName="Perfil" redirect>
           <ProfilesDetail />
         </PermissionGuard>
       }
@@ -194,7 +207,7 @@ export default () => (
     <Route
       path="profile-permissions-detail/:id"
       element={
-        <PermissionGuard moduleName="Permisos" requiredAction="canView" redirect>
+        <PermissionGuard moduleName="Permisos" redirect>
           <ProfilePermissionsDetail />
         </PermissionGuard>
       }
@@ -251,7 +264,7 @@ export default () => (
     <Route
       path="usuarios-detail/:login"
       element={
-        <PermissionGuard moduleName="Usuarios" requiredAction="canView" redirect>
+        <PermissionGuard moduleName="Usuarios" redirect>
           <UsuariosDetail />
         </PermissionGuard>
       }

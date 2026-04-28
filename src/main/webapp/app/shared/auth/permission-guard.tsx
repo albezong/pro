@@ -1,7 +1,5 @@
 import React from 'react';
 import { Navigate } from 'react-router-dom';
-import { hasAnyAuthority } from 'app/shared/auth/private-route';
-import { AUTHORITIES } from 'app/config/constants';
 import { ModuleAccess } from 'app/shared/reducers/permission';
 import { useAppSelector } from 'app/config/store';
 
@@ -21,36 +19,44 @@ const Spinner = ({ label }: { label: string }) => (
 );
 
 /**
- * Renderiza los hijos solo si el usuario tiene AL MENOS UN permiso
- * (canCreate, canEdit, canDelete o canHistory) en alguno de los módulos indicados.
- * canView ya no se evalúa.
+ * Guard de permisos de módulo.
+ *
+ * IMPORTANTE: ROLE_ADMIN de JHipster NO bypass este guard.
+ * El acceso se determina SIEMPRE por la tabla module_permission en BD.
+ * Solo isSuperAdmin=true en el perfil asignado da acceso total.
+ *
+ * Flujo:
+ * 1. Espera sesión (sessionHasBeenFetched)
+ * 2. Espera permisos (loaded=true) — nunca redirige antes
+ * 3. Si el perfil es isSuperAdmin o isAdmin (flag de BD) → pasa
+ * 4. Si tiene el permiso requerido en el módulo → pasa
+ * 5. Si no → redirect a /404 o mensaje inline
  */
 const PermissionGuard = ({ moduleName, requiredAction, children, redirect = false }: PermissionGuardProps) => {
-  const authorities = useAppSelector(s => s.authentication.account?.authorities ?? []);
-  const isAdmin = hasAnyAuthority(authorities, [AUTHORITIES.ADMIN]);
   const sessionFetched = useAppSelector(s => s.authentication.sessionHasBeenFetched);
   const isAuthenticated = useAppSelector(s => s.authentication.isAuthenticated);
   const loaded = useAppSelector(s => s.permission?.loaded);
   const perms = useAppSelector(s => s.permission?.permissions);
 
-  if (isAdmin) return <>{children}</>;
   if (!sessionFetched) return <Spinner label="Cargando sesión..." />;
   if (!isAuthenticated) return null;
   if (!loaded) return <Spinner label="Cargando permisos..." />;
+
+  // SuperAdmin de BD (perfil marcado como isSuperAdmin) → acceso total
   if (perms?.isAdmin || perms?.isSuperAdmin) return <>{children}</>;
 
   const names = Array.isArray(moduleName) ? moduleName : [moduleName];
+
   const hasAccess = names.some(name => {
     const m = perms?.modules?.[name];
     if (!m) return false;
 
-    // Si se pide una acción específica (canCreate, canEdit, etc.), evalúa solo esa
     if (requiredAction && requiredAction !== 'canView') {
       return !!m[requiredAction];
     }
 
-    // Por defecto: acceso si tiene cualquier permiso activo (sin canView)
-    return !!(m.canCreate || m.canEdit || m.canDelete || m.canHistory);
+    // Sin requiredAction o canView → acceso si tiene cualquier permiso activo
+    return !!(m.canView || m.canCreate || m.canEdit || m.canDelete || m.canHistory);
   });
 
   if (!hasAccess) {
