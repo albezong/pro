@@ -42,7 +42,8 @@ import UsuariosUpdate from './usuarios/usuarios-update';
  */
 const SeguridadIndex = () => {
   const loaded = useAppSelector(s => s.permission?.loaded);
-  const isSuperAdmin = useAppSelector(s => s.permission?.permissions?.isSuperAdmin || s.permission?.permissions?.isAdmin);
+  const isSuperAdmin = useAppSelector(s => s.permission?.permissions?.isSuperAdmin);
+
   const usuarios = usePermission('Usuarios');
   const perfil = usePermission('Perfil');
   const modulos = usePermission('Modulos');

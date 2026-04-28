@@ -38,7 +38,7 @@ const PermissionGuard = ({ moduleName, requiredAction, children, redirect = fals
   if (!loaded) return <Spinner label="Cargando permisos..." />;
 
   // isSuperAdmin del perfil en BD → acceso total
-  if (perms?.isAdmin || perms?.isSuperAdmin) return <>{children}</>;
+  if (perms?.isSuperAdmin) return <>{children}</>;
 
   const names = Array.isArray(moduleName) ? moduleName : [moduleName];
 

@@ -1,3 +1,5 @@
+// use-permission.ts
+
 import { useAppSelector } from 'app/config/store';
 import { ModuleAccess } from 'app/shared/reducers/permission';
 
@@ -8,31 +10,17 @@ const NO_ACCESS: ModuleAccess = {
   canDelete: false,
 };
 
-/**
- * Hook que devuelve los permisos del módulo indicado para el usuario actual.
- *
- * IMPORTANTE: ROLE_ADMIN de JHipster NO da acceso automático.
- * El acceso lo determina SIEMPRE el perfil en BD.
- * Solo isSuperAdmin=true en el perfil devuelve acceso total a todos los módulos.
- *
- * Flujo:
- * 1. Sin autenticación → NO_ACCESS
- * 2. Permisos no cargados aún → NO_ACCESS (el guard mostrará spinner)
- * 3. isSuperAdmin o isAdmin de BD → FULL_ACCESS
- * 4. Evalúa módulo en el mapa de permisos
- */
 export const usePermission = (moduleName: string): ModuleAccess => {
   const perms = useAppSelector(state => state.permission?.permissions);
   const isAuthenticated = useAppSelector(state => state.authentication.isAuthenticated);
   const loaded = useAppSelector(state => state.permission?.loaded);
 
   if (!isAuthenticated) return NO_ACCESS;
-  // Mientras no carguen los permisos de BD, devolver NO_ACCESS
-  // El PermissionGuard mostrará spinner hasta que loaded=true
   if (!loaded || !perms) return NO_ACCESS;
 
-  // isSuperAdmin del perfil en BD → acceso total
-  if (perms.isSuperAdmin || perms.isAdmin) {
+  // ✅ SOLO isSuperAdmin de BD da acceso total a módulos
+  // ❌ isAdmin (ROLE_ADMIN de JHipster) ya NO bypasea — solo sirve para /api/admin/**
+  if (perms.isSuperAdmin) {
     return { canView: true, canCreate: true, canEdit: true, canDelete: true };
   }
 
