@@ -1,0 +1,11 @@
+id;can_create;can_edit;can_delete;can_view;can_history
+1;false;false;true;true;false
+2;false;true;false;true;true
+3;true;true;true;true;false
+4;true;true;false;true;true
+5;true;false;true;true;false
+6;false;true;true;false;true
+7;false;false;false;false;true
+8;false;true;false;true;true
+9;true;false;false;false;true
+10;false;false;true;false;true

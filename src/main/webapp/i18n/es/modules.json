@@ -1,0 +1,25 @@
+{
+  "proyecto3UJhipsterApp": {
+    "modules": {
+      "home": {
+        "title": "Modules",
+        "refreshListLabel": "Refrescar lista",
+        "createLabel": "Crear nuevo Modules",
+        "createOrEditLabel": "Crear o editar Modules",
+        "notFound": "Ningún Modules encontrado"
+      },
+      "created": "Un nuevo Modules ha sido creado con el identificador {{ param }}",
+      "updated": "Un Modules ha sido actualizado con el identificador {{ param }}",
+      "deleted": "Un Modules ha sido eliminado con el identificador {{ param }}",
+      "delete": {
+        "question": "¿Seguro que quiere eliminar Modules {{ id }}?"
+      },
+      "detail": {
+        "title": "Modules"
+      },
+      "id": "ID",
+      "nombre": "Nombre",
+      "fechaCreacion": "Fecha Creacion"
+    }
+  }
+}

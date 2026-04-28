@@ -1,0 +1,29 @@
+{
+  "proyecto3UJhipsterApp": {
+    "profile": {
+      "home": {
+        "title": "Profiles",
+        "refreshListLabel": "Refrescar lista",
+        "createLabel": "Crear nuevo Profile",
+        "createOrEditLabel": "Crear o editar Profile",
+        "notFound": "Ningún Profiles encontrado"
+      },
+      "created": "Un nuevo Profile ha sido creado con el identificador {{ param }}",
+      "updated": "Un Profile ha sido actualizado con el identificador {{ param }}",
+      "deleted": "Un Profile ha sido eliminado con el identificador {{ param }}",
+      "delete": {
+        "question": "¿Seguro que quiere eliminar Profile {{ id }}?"
+      },
+      "detail": {
+        "title": "Profile"
+      },
+      "id": "ID",
+      "name": "Name",
+      "description": "Description",
+      "active": "Active",
+      "isSuperAdmin": "Is Super Admin",
+      "permissions": "Permissions",
+      "user": "User"
+    }
+  }
+}

@@ -1,0 +1,50 @@
+entity Profile {
+  name String required maxlength(100)
+  description String maxlength(255)
+  active Boolean
+  isSuperAdmin Boolean
+}
+
+entity ModulePermission {
+  canCreate Boolean
+  canEdit Boolean
+  canDelete Boolean
+  canView Boolean
+  canHistory Boolean
+}
+
+entity Modules {
+  nombre String required maxlength(100)
+  fechaCreacion LocalDate
+}
+
+/* * RELACIONES
+ */
+
+relationship ManyToMany {
+  // Profile es el dueño de la relación con los usuarios del sistema
+  Profile{user(login)} to User with builtInEntity
+}
+
+relationship OneToMany {
+  // Un perfil tiene muchos permisos
+  Profile{permissions} to ModulePermission{profile(name)}
+}
+
+relationship ManyToOne {
+  /**
+   * CAMBIO SOLICITADO:
+   * ModulePermission tendrá la FK de Modules.
+   * Se mostrará el 'nombre' del módulo en el cliente.
+   */
+  ModulePermission{module(nombre)} to Modules
+}
+
+/*
+ * CONFIGURACIONES ADICIONALES
+ */
+
+dto Profile, ModulePermission, Modules with mapstruct
+service Profile, ModulePermission, Modules with serviceClass
+filter Profile, ModulePermission, Modules
+paginate Profile, ModulePermission, Modules with pagination

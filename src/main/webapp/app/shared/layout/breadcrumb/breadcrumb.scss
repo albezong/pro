@@ -1,0 +1,43 @@
+/* Contenedor del Breadcrumb */
+.custom-breadcrumb {
+  background-color: transparent !important;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  font-size: 0.9rem;
+}
+
+/* Estilo de los enlaces */
+.breadcrumb-link {
+  color: #6c757d;
+  text-decoration: none;
+  transition: color 0.2s ease-in-out;
+  font-weight: 500;
+
+  &:hover {
+    color: #007bff; /* Azul primario */
+    text-decoration: underline;
+  }
+}
+
+/* El separador (el símbolo / o >) */
+.breadcrumb-item + .breadcrumb-item::before {
+  content: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="%23adb5bd" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>') !important;
+  vertical-align: middle;
+  padding-right: 0.5rem;
+}
+
+/* Estilo para la página actual (la última) */
+.current-page {
+  color: #212529;
+  font-weight: 700;
+  background-color: #e9ecef;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+/* Ajuste para iconos */
+.breadcrumb-item i {
+  font-size: 0.85rem;
+}

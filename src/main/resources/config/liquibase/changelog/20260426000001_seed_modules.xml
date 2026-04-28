@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <!--
+        Seed data: módulos del sistema.
+        El campo 'nombre' debe coincidir exactamente con el moduleName usado en el frontend
+        (usePermission, PermissionGuard, CentrosMenu).
+    -->
+    <changeSet id="20260426000001" author="sistema">
+        <insert tableName="modules">
+            <column name="id" valueSequenceNext="sequence_generator"/>
+            <column name="nombre" value="Usuarios"/>
+            <column name="fecha_creacion" valueDate="now()"/>
+        </insert>
+        <insert tableName="modules">
+            <column name="id" valueSequenceNext="sequence_generator"/>
+            <column name="nombre" value="Perfil"/>
+            <column name="fecha_creacion" valueDate="now()"/>
+        </insert>
+        <insert tableName="modules">
+            <column name="id" valueSequenceNext="sequence_generator"/>
+            <column name="nombre" value="Modulos"/>
+            <column name="fecha_creacion" valueDate="now()"/>
+        </insert>
+        <insert tableName="modules">
+            <column name="id" valueSequenceNext="sequence_generator"/>
+            <column name="nombre" value="Permisos"/>
+            <column name="fecha_creacion" valueDate="now()"/>
+        </insert>
+        <insert tableName="modules">
+            <column name="id" valueSequenceNext="sequence_generator"/>
+            <column name="nombre" value="Seguridad"/>
+            <column name="fecha_creacion" valueDate="now()"/>
+        </insert>
+        <insert tableName="modules">
+            <column name="id" valueSequenceNext="sequence_generator"/>
+            <column name="nombre" value="Principal1"/>
+            <column name="fecha_creacion" valueDate="now()"/>
+        </insert>
+        <insert tableName="modules">
+            <column name="id" valueSequenceNext="sequence_generator"/>
+            <column name="nombre" value="Principal2"/>
+            <column name="fecha_creacion" valueDate="now()"/>
+        </insert>
+        <insert tableName="modules">
+            <column name="id" valueSequenceNext="sequence_generator"/>
+            <column name="nombre" value="RecursosHumanos"/>
+            <column name="fecha_creacion" valueDate="now()"/>
+        </insert>
+        <insert tableName="modules">
+            <column name="id" valueSequenceNext="sequence_generator"/>
+            <column name="nombre" value="Ventas"/>
+            <column name="fecha_creacion" valueDate="now()"/>
+        </insert>
+    </changeSet>
+
+</databaseChangeLog>

@@ -1,0 +1,155 @@
+.module-management {
+  background-color: white;
+  padding: 20px;
+
+  // --- CABECERA ---
+  .header-divider {
+    border-top: 3px solid #000000;
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+    opacity: 1;
+  }
+
+  .module-icon-bg {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    height: 50px;
+    background-color: white;
+    color: #000080; // Color azul para el icono
+  }
+
+  // --- SECCIÓN DE FILTROS ---
+  .filter-card.card {
+    border: none !important;
+    border-radius: 8px !important;
+    overflow: hidden;
+    background-color: #dcdcdc !important; // Fondo gris igual a profiles
+    box-shadow: none !important;
+    margin-bottom: 1.5rem;
+
+    .card-header {
+      background-color: #dcdcdc !important;
+      color: black !important;
+      border: none !important;
+      font-weight: bold;
+      padding: 10px 15px;
+    }
+
+    .filter-card-body.card-body {
+      background-color: transparent !important;
+      padding: 1.2rem;
+    }
+
+    label {
+      font-size: 0.9rem;
+      color: #333;
+    }
+  }
+
+  // --- TABLA PERSONALIZADA ---
+  .custom-table {
+    border: 1px solid #ccc;
+    border-collapse: collapse;
+    width: 100%;
+
+    thead th {
+      background-color: #000000 !important; // Cabecera Negra
+      color: white !important;
+      text-align: center;
+      font-weight: normal;
+      border: 1px solid #fff;
+      padding: 10px;
+      white-space: nowrap;
+
+      .svg-inline--fa {
+        margin-left: 5px;
+        font-size: 0.8em;
+      }
+    }
+
+    tbody td {
+      border: 1px solid #dee2e6;
+      vertical-align: middle;
+      padding: 8px;
+      color: #555;
+    }
+
+    &.table-striped tbody tr:nth-of-type(odd) {
+      background-color: rgba(0, 0, 0, 0.03);
+    }
+  }
+
+  // --- INPUTS Y FORMULARIOS ---
+  .form-control,
+  .form-select {
+    border: 1px solid #ced4da !important;
+    background-color: #ffffff !important;
+    border-radius: 4px;
+    height: calc(1.5em + 0.5rem + 2px);
+    padding: 0.25rem 0.5rem;
+
+    &:focus {
+      border-color: #000080 !important;
+      box-shadow: 0 0 0 0.2rem rgba(0, 0, 128, 0.1) !important;
+    }
+  }
+
+  // --- BOTONES ---
+  .custom-btn-search {
+    background-color: #007bff !important; // Azul para buscar
+    border-color: #007bff !important;
+    color: white !important;
+    padding: 4px 20px;
+    font-size: 0.9rem;
+    border-radius: 4px;
+  }
+
+  .custom-btn-clear {
+    background-color: #6c757d !important; // Gris para limpiar
+    border-color: #6c757d !important;
+    color: white !important;
+    padding: 4px 20px;
+    font-size: 0.9rem;
+    border-radius: 4px;
+  }
+
+  .custom-btn-add {
+    background-color: #5cb85c !important; // Verde para Nuevo
+    border-color: #4cae4c !important;
+    border-radius: 4px;
+    padding: 4px 12px;
+    color: white !important;
+
+    &:hover {
+      background-color: #449d44 !important;
+    }
+  }
+
+  // --- ETIQUETAS ---
+  .results-label {
+    font-weight: bold;
+    color: #333;
+    font-size: 0.85rem;
+    margin-bottom: 10px;
+  }
+}
+
+// --- PAGINACIÓN ---
+.custom-pagination-container {
+  .pagination {
+    .page-item {
+      .page-link {
+        color: #003366;
+        border-radius: 4px;
+        margin: 0 2px;
+      }
+      &.active .page-link {
+        background-color: #003366;
+        border-color: #003366;
+        color: white;
+      }
+    }
+  }
+}

@@ -1,0 +1,52 @@
+{
+  "annotations": {
+    "changelogDate": "20260330023351"
+  },
+  "applications": "*",
+  "dto": "mapstruct",
+  "fields": [
+    {
+      "fieldName": "canCreate",
+      "fieldType": "Boolean"
+    },
+    {
+      "fieldName": "canEdit",
+      "fieldType": "Boolean"
+    },
+    {
+      "fieldName": "canDelete",
+      "fieldType": "Boolean"
+    },
+    {
+      "fieldName": "canView",
+      "fieldType": "Boolean"
+    },
+    {
+      "fieldName": "canHistory",
+      "fieldType": "Boolean"
+    }
+  ],
+  "jpaMetamodelFiltering": true,
+  "name": "ModulePermission",
+  "pagination": "pagination",
+  "relationships": [
+    {
+      "documentation": "CAMBIO SOLICITADO:\\nModulePermission tendrá la FK de Modules.\\nSe mostrará el 'nombre' del módulo en el cliente.",
+      "otherEntityField": "nombre",
+      "otherEntityName": "modules",
+      "relationshipName": "module",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one"
+    },
+    {
+      "otherEntityField": "name",
+      "otherEntityName": "profile",
+      "otherEntityRelationshipName": "permissions",
+      "relationshipName": "profile",
+      "relationshipSide": "right",
+      "relationshipType": "many-to-one"
+    }
+  ],
+  "searchEngine": "no",
+  "service": "serviceClass"
+}

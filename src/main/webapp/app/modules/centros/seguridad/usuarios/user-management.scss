@@ -1,0 +1,106 @@
+.custom-user-management {
+  background-color: white;
+  padding: 20px;
+
+  // --- SECCIÓN DE FILTROS ---
+  .filter-card.card {
+    border: none !important; // Quitamos el borde general
+    //border-left: 5px solid #000080 !important; // Mantenemos el detalle azul
+    border-radius: 8px !important;
+    overflow: hidden;
+    background-color: #dcdcdc !important; // Fondo gris de la sección
+    box-shadow: none !important;
+    margin-bottom: 1.5rem;
+
+    .card-header {
+      background-color: #dcdcdc !important;
+      color: black !important;
+      border: none !important;
+      font-weight: bold;
+      padding: 10px 15px;
+    }
+
+    .filter-card-body.card-body {
+      background-color: transparent !important; // Para que use el gris del padre
+      padding: 1.5rem;
+    }
+  }
+
+  // --- TABLA Y CONTENIDO ---
+  .custom-table {
+    border: 1px solid #ccc;
+
+    thead th {
+      background-color: #003366 !important;
+      color: white;
+      text-align: center;
+      font-weight: normal;
+      border: 1px solid #fff;
+    }
+
+    tbody td {
+      border: 1px solid #dee2e6;
+      vertical-align: middle;
+    }
+  }
+
+  // --- INPUTS Y FORMULARIO ---
+  .form-control,
+  .form-select {
+    border: 1px solid #ced4da !important;
+    background-color: #ffffff !important; // Inputs blancos para resaltar sobre el gris
+    border-radius: 4px;
+
+    &:focus {
+      border-color: #000080 !important;
+      box-shadow: 0 0 0 0.2rem rgba(0, 0, 128, 0.1) !important;
+    }
+  }
+
+  // Otros estilos existentes
+  .header-divider {
+    border-top: 2px solid #5cb85c;
+    margin-top: 0;
+  }
+  .custom-btn-green {
+    background-color: #5cb85c !important;
+    border-color: #4cae4c !important;
+    padding: 5px 25px;
+  }
+  .custom-btn-add {
+    background-color: #5cb85c !important;
+    border-radius: 4px;
+    padding: 2px 10px;
+  }
+  .results-label {
+    font-weight: bold;
+    color: #333;
+  }
+  .filter-card-body {
+    // Forzamos que todos los labels de los campos tengan el mismo estilo
+    label {
+      font-size: 0.875rem; // Esto es 'small'
+      font-weight: bold;
+      margin-bottom: 0.5rem;
+      display: block;
+      color: #333;
+    }
+
+    // Estilo para el mensaje de error de JHipster para que no rompa la línea
+    .invalid-feedback {
+      font-size: 0.75rem;
+      position: absolute; // Evita que el mensaje "empuje" el contenido hacia abajo
+    }
+
+    .mb-3 {
+      position: relative; // Necesario para el absolute de arriba
+      padding-bottom: 10px; // Espacio de reserva para el error
+    }
+  }
+
+  // Asegurar que selects y inputs tengan la misma altura exacta
+  .form-control, .form-select {
+    height: calc(2.25rem + 2px); 
+  }
+}
+

@@ -1,0 +1,30 @@
+{
+  "proyecto3UJhipsterApp": {
+    "modulePermission": {
+      "home": {
+        "title": "Module Permissions",
+        "refreshListLabel": "Refrescar lista",
+        "createLabel": "Crear nuevo Module Permission",
+        "createOrEditLabel": "Crear o editar Module Permission",
+        "notFound": "Ningún Module Permissions encontrado"
+      },
+      "created": "Un nuevo Module Permission ha sido creado con el identificador {{ param }}",
+      "updated": "Un Module Permission ha sido actualizado con el identificador {{ param }}",
+      "deleted": "Un Module Permission ha sido eliminado con el identificador {{ param }}",
+      "delete": {
+        "question": "¿Seguro que quiere eliminar Module Permission {{ id }}?"
+      },
+      "detail": {
+        "title": "Module Permission"
+      },
+      "id": "ID",
+      "canCreate": "Can Create",
+      "canEdit": "Can Edit",
+      "canDelete": "Can Delete",
+      "canView": "Can View",
+      "canHistory": "Can History",
+      "module": "Module",
+      "profile": "Profile"
+    }
+  }
+}
