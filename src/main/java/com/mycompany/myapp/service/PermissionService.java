@@ -41,7 +41,7 @@ public class PermissionService {
         }
         Optional<String> login = SecurityUtils.getCurrentUserLogin();
         if (login.isEmpty()) return false;
-        return hasPermissionForUser(login.get(), moduleName, action);
+        return hasPermissionForUser(login.orElseThrow(), moduleName, action);
     }
 
     /**
@@ -55,7 +55,7 @@ public class PermissionService {
         for (Profile profile : profiles) {
             if (Boolean.TRUE.equals(profile.getIsSuperAdmin())) return true;
             Optional<ModulePermission> perm = modulePermissionRepository.findByProfileIdAndModuleName(profile.getId(), moduleName);
-            if (perm.isPresent() && checkAction(perm.get(), action)) {
+            if (perm.isPresent() && checkAction(perm.orElseThrow(), action)) {
                 return true;
             }
         }
@@ -77,7 +77,7 @@ public class PermissionService {
             return dto;
         }
 
-        List<Profile> profiles = profileRepository.findActiveProfilesByUserLogin(login.get());
+        List<Profile> profiles = profileRepository.findActiveProfilesByUserLogin(login.orElseThrow());
         boolean isSuperAdmin = profiles.stream().anyMatch(p -> Boolean.TRUE.equals(p.getIsSuperAdmin()));
         dto.setSuperAdmin(isSuperAdmin);
 
