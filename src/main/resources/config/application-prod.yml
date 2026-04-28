@@ -34,7 +34,6 @@ spring:
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
 
-
     # configuracio de coneccion para LOCALHOST
     # url: jdbc:postgresql://localhost:5432/proyecto3UJhipster
     # username: proyecto3UJhipster
@@ -44,7 +43,6 @@ spring:
     url: ${SPRING_DATASOURCE_URL}
     username: ${SPRING_DATASOURCE_USERNAME}
     password: ${SPRING_DATASOURCE_PASSWORD}
-
 
     hikari:
       poolName: Hikari

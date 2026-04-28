@@ -99,8 +99,8 @@
   }
 
   // Asegurar que selects y inputs tengan la misma altura exacta
-  .form-control, .form-select {
-    height: calc(2.25rem + 2px); 
+  .form-control,
+  .form-select {
+    height: calc(2.25rem + 2px);
   }
 }
-

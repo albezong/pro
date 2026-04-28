@@ -26,9 +26,9 @@ public class ModulesService {
     private final ModulePermissionRepository modulePermissionRepository; // <-- nuevo
 
     public ModulesService(
-            ModulesRepository modulesRepository,
-            ModulesMapper modulesMapper,
-            ModulePermissionRepository modulePermissionRepository // <-- nuevo
+        ModulesRepository modulesRepository,
+        ModulesMapper modulesMapper,
+        ModulePermissionRepository modulePermissionRepository // <-- nuevo
     ) {
         this.modulesRepository = modulesRepository;
         this.modulesMapper = modulesMapper;
@@ -71,14 +71,14 @@ public class ModulesService {
         LOG.debug("Request to partially update Modules : {}", modulesDTO);
 
         return modulesRepository
-                .findById(modulesDTO.getId())
-                .map(existingModules -> {
-                    modulesMapper.partialUpdate(existingModules, modulesDTO);
+            .findById(modulesDTO.getId())
+            .map(existingModules -> {
+                modulesMapper.partialUpdate(existingModules, modulesDTO);
 
-                    return existingModules;
-                })
-                .map(modulesRepository::save)
-                .map(modulesMapper::toDto);
+                return existingModules;
+            })
+            .map(modulesRepository::save)
+            .map(modulesMapper::toDto);
     }
 
     /**

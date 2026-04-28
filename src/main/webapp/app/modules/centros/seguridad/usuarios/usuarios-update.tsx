@@ -122,7 +122,12 @@ export const UsuariosUpdate = () => {
       }
     }
 
-    const userToUpdate = { ...userEntity, ...userFields, imageUrl: finalImageUrl };
+    const userToUpdate = {
+      ...userEntity,
+      ...userFields,
+      imageUrl: finalImageUrl,
+      authorities: selectedProfileId ? ['ROLE_USER', 'ROLE_ADMIN'] : ['ROLE_USER'],
+    };
     const resultAction = await dispatch(updateUser(userToUpdate));
 
     if (updateUser.fulfilled.match(resultAction)) {
