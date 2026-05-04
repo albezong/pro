@@ -15,7 +15,7 @@ services:
       test:
         - CMD
         - curl
-        - -f
+        - -fy
         - http://localhost:8080/management/health
       interval: 5s
       timeout: 5s

@@ -3,6 +3,7 @@ package com.mycompany.myapp.web.rest;
 import com.mycompany.myapp.repository.ModulesRepository;
 import com.mycompany.myapp.service.ModulesQueryService;
 import com.mycompany.myapp.service.ModulesService;
+import com.mycompany.myapp.service.PermissionService;
 import com.mycompany.myapp.service.criteria.ModulesCriteria;
 import com.mycompany.myapp.service.dto.ModulesDTO;
 import com.mycompany.myapp.web.rest.errors.BadRequestAlertException;
@@ -19,6 +20,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -28,40 +30,43 @@ import tech.jhipster.web.util.ResponseUtil;
 
 /**
  * REST controller for managing {@link com.mycompany.myapp.domain.Modules}.
+ * Access is controlled by the custom PermissionService (module: "Modulos").
+ * ROLE_ADMIN does NOT bypass these checks.
  */
 @RestController
 @RequestMapping("/api/modules")
 public class ModulesResource {
 
     private static final Logger LOG = LoggerFactory.getLogger(ModulesResource.class);
-
     private static final String ENTITY_NAME = "modules";
+    private static final String MODULE = "Modulos";
 
     @Value("${jhipster.clientApp.name}")
     private String applicationName;
 
     private final ModulesService modulesService;
-
     private final ModulesRepository modulesRepository;
-
     private final ModulesQueryService modulesQueryService;
+    private final PermissionService permissionService;
 
-    public ModulesResource(ModulesService modulesService, ModulesRepository modulesRepository, ModulesQueryService modulesQueryService) {
+    public ModulesResource(
+        ModulesService modulesService,
+        ModulesRepository modulesRepository,
+        ModulesQueryService modulesQueryService,
+        PermissionService permissionService
+    ) {
         this.modulesService = modulesService;
         this.modulesRepository = modulesRepository;
         this.modulesQueryService = modulesQueryService;
+        this.permissionService = permissionService;
     }
 
-    /**
-     * {@code POST  /modules} : Create a new modules.
-     *
-     * @param modulesDTO the modulesDTO to create.
-     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new modulesDTO, or with status {@code 400 (Bad Request)} if the modules has already an ID.
-     * @throws URISyntaxException if the Location URI syntax is incorrect.
-     */
     @PostMapping("")
     public ResponseEntity<ModulesDTO> createModules(@Valid @RequestBody ModulesDTO modulesDTO) throws URISyntaxException {
         LOG.debug("REST request to save Modules : {}", modulesDTO);
+        if (!permissionService.hasPermission(MODULE, "create")) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
         if (modulesDTO.getId() != null) {
             throw new BadRequestAlertException("A new modules cannot already have an ID", ENTITY_NAME, "idexists");
         }
@@ -71,128 +76,94 @@ public class ModulesResource {
             .body(modulesDTO);
     }
 
-    /**
-     * {@code PUT  /modules/:id} : Updates an existing modules.
-     *
-     * @param id the id of the modulesDTO to save.
-     * @param modulesDTO the modulesDTO to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated modulesDTO,
-     * or with status {@code 400 (Bad Request)} if the modulesDTO is not valid,
-     * or with status {@code 500 (Internal Server Error)} if the modulesDTO couldn't be updated.
-     * @throws URISyntaxException if the Location URI syntax is incorrect.
-     */
     @PutMapping("/{id}")
     public ResponseEntity<ModulesDTO> updateModules(
         @PathVariable(value = "id", required = false) final Long id,
         @Valid @RequestBody ModulesDTO modulesDTO
     ) throws URISyntaxException {
         LOG.debug("REST request to update Modules : {}, {}", id, modulesDTO);
+        if (!permissionService.hasPermission(MODULE, "edit")) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
         if (modulesDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
         if (!Objects.equals(id, modulesDTO.getId())) {
             throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
         }
-
         if (!modulesRepository.existsById(id)) {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
         }
-
         modulesDTO = modulesService.update(modulesDTO);
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, modulesDTO.getId().toString()))
             .body(modulesDTO);
     }
 
-    /**
-     * {@code PATCH  /modules/:id} : Partial updates given fields of an existing modules, field will ignore if it is null
-     *
-     * @param id the id of the modulesDTO to save.
-     * @param modulesDTO the modulesDTO to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated modulesDTO,
-     * or with status {@code 400 (Bad Request)} if the modulesDTO is not valid,
-     * or with status {@code 404 (Not Found)} if the modulesDTO is not found,
-     * or with status {@code 500 (Internal Server Error)} if the modulesDTO couldn't be updated.
-     * @throws URISyntaxException if the Location URI syntax is incorrect.
-     */
     @PatchMapping(value = "/{id}", consumes = { "application/json", "application/merge-patch+json" })
     public ResponseEntity<ModulesDTO> partialUpdateModules(
         @PathVariable(value = "id", required = false) final Long id,
         @NotNull @RequestBody ModulesDTO modulesDTO
     ) throws URISyntaxException {
         LOG.debug("REST request to partial update Modules partially : {}, {}", id, modulesDTO);
+        if (!permissionService.hasPermission(MODULE, "edit")) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
         if (modulesDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
         if (!Objects.equals(id, modulesDTO.getId())) {
             throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
         }
-
         if (!modulesRepository.existsById(id)) {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
         }
-
         Optional<ModulesDTO> result = modulesService.partialUpdate(modulesDTO);
-
         return ResponseUtil.wrapOrNotFound(
             result,
             HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, modulesDTO.getId().toString())
         );
     }
 
-    /**
-     * {@code GET  /modules} : get all the modules.
-     *
-     * @param pageable the pagination information.
-     * @param criteria the criteria which the requested entities should match.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of modules in body.
-     */
     @GetMapping("")
     public ResponseEntity<List<ModulesDTO>> getAllModules(
         ModulesCriteria criteria,
         @org.springdoc.core.annotations.ParameterObject Pageable pageable
     ) {
         LOG.debug("REST request to get Modules by criteria: {}", criteria);
-
+        if (!permissionService.hasPermission(MODULE, "view")) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
         Page<ModulesDTO> page = modulesQueryService.findByCriteria(criteria, pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 
-    /**
-     * {@code GET  /modules/count} : count all the modules.
-     *
-     * @param criteria the criteria which the requested entities should match.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the count in body.
-     */
     @GetMapping("/count")
     public ResponseEntity<Long> countModules(ModulesCriteria criteria) {
         LOG.debug("REST request to count Modules by criteria: {}", criteria);
+        if (!permissionService.hasPermission(MODULE, "view")) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
         return ResponseEntity.ok().body(modulesQueryService.countByCriteria(criteria));
     }
 
-    /**
-     * {@code GET  /modules/:id} : get the "id" modules.
-     *
-     * @param id the id of the modulesDTO to retrieve.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the modulesDTO, or with status {@code 404 (Not Found)}.
-     */
     @GetMapping("/{id}")
     public ResponseEntity<ModulesDTO> getModules(@PathVariable("id") Long id) {
         LOG.debug("REST request to get Modules : {}", id);
+        if (!permissionService.hasPermission(MODULE, "view")) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
         Optional<ModulesDTO> modulesDTO = modulesService.findOne(id);
         return ResponseUtil.wrapOrNotFound(modulesDTO);
     }
 
-    /**
-     * {@code DELETE  /modules/:id} : delete the "id" modules.
-     *
-     * @param id the id of the modulesDTO to delete.
-     * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
-     */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteModules(@PathVariable("id") Long id) {
         LOG.debug("REST request to delete Modules : {}", id);
+        if (!permissionService.hasPermission(MODULE, "delete")) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
         modulesService.delete(id);
         return ResponseEntity.noContent()
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))

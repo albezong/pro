@@ -32,7 +32,7 @@ export const usePermission = (moduleName: string): ModuleAccess => {
   if (!loaded || !perms) return NO_ACCESS;
 
   // isSuperAdmin del perfil en BD → acceso total
-  if (perms.isSuperAdmin || perms.isAdmin) {
+  if (perms.isSuperAdmin) {
     return { canView: true, canCreate: true, canEdit: true, canDelete: true };
   }
 

@@ -23,6 +23,7 @@
     <include file="config/liquibase/changelog/20260330023351_added_entity_ModulePermission.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20260423002117_added_entity_Modules.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20260426000001_seed_modules.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20260427000001_seed_superadmin_profile.xml" relativeToChangelogFile="false"/>
     <!-- jhipster-needle-liquibase-add-changelog - JHipster will add liquibase changelogs here -->
     <include file="config/liquibase/changelog/20260330023350_added_entity_constraints_Profile.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20260330023351_added_entity_constraints_ModulePermission.xml" relativeToChangelogFile="false"/>
